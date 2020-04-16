@@ -5,7 +5,8 @@ require 'net/http'
 
 module Atol
   class Config < Anyway::Config
-    attr_config :login,
+    attr_config :api_url,
+                :login,
                 :password,
                 :inn,
                 :group_code,
@@ -17,5 +18,6 @@ module Atol
                 req_tries_number: 3,
                 default_payment_type: 1,
                 http_client: Net::HTTP
+
   end
 end
