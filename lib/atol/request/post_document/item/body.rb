@@ -52,7 +52,7 @@ module Atol
               price: price,
               quantity: quantity,
               sum: (price * quantity).round(2),
-              tax: config.default_tax,
+              vat: { type: config.default_tax },
               payment_method: payment_method,
               payment_object: payment_object
             }
