@@ -7,12 +7,13 @@ module Atol
     class PostDocument
       module Sell
         class Body
-          def initialize(external_id:, phone: '', email: '', items:, config: nil)
+          def initialize(external_id:, phone: '', email: '', items:, config: nil, payments: nil)
             raise(Atol::EmptyClientContactError) if phone.empty? && email.empty?
             raise(Atol::EmptySellItemsError) if items.empty?
 
             @config = config || Atol.config
             @external_id = external_id
+            @payments = payments
             @phone = phone
             @email = email
             @items = items
@@ -34,12 +35,16 @@ module Atol
               result[:receipt][:client][:email] = @email unless @email.empty?
               result[:receipt][:client][:phone] = @phone unless @phone.empty?
               result[:service][:callback_url] = @config.callback_url if @config.callback_url
-
-              total = @items.inject(0) { |sum, item| sum += item[:sum] }
-
-              result[:receipt][:total] = total
-              result[:receipt][:payments][0][:sum] = total
               result[:receipt][:items] = @items
+              total = @items.inject(0) { |sum, item| sum += item[:sum] }
+              if @payments
+                result[:receipt][:payments] = @payments
+                result[:receipt][:total] = total
+              else
+                result[:receipt][:total] = total
+                result[:receipt][:payments][0][:sum] = total
+              end
+
             end
           end
 
