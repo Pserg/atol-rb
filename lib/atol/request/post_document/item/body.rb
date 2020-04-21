@@ -21,9 +21,9 @@ module Atol
             'composite', 'another'
           ]
 
-          attr_accessor :config, :name, :price, :quantity, :payment_method, :payment_object
+          attr_accessor :config, :name, :price, :quantity, :sum, :payment_method, :payment_object
 
-          def initialize(config: nil, name:, price:, quantity: 1, payment_method:, payment_object:)
+          def initialize(config: nil, name:, price:, quantity: 1, sum: nil, payment_method:, payment_object:)
             raise Atol::ZeroItemQuantityError if quantity.to_i.zero?
             raise BadPaymentMethodError unless PAYMENT_METHODS.include?(payment_method.to_s)
             raise BadPaymentObjectError unless PAYMENT_OBJECTS.include?(payment_object.to_s)
@@ -34,6 +34,7 @@ module Atol
             self.quantity = quantity.to_f
             self.payment_method = payment_method.to_s
             self.payment_object = payment_object.to_s
+            self.sum = sum
           end
 
           def to_h
@@ -51,7 +52,7 @@ module Atol
               name: name,
               price: price,
               quantity: quantity,
-              sum: (price * quantity).round(2),
+              sum: sum.nil? ? (price * quantity).round(2) : sum,
               vat: { type: config.default_tax },
               payment_method: payment_method,
               payment_object: payment_object
